@@ -1,0 +1,30 @@
+import os
+from flask import Flask, render_template, request
+from flaskext.mysql import MySQL
+
+mysql = MySQL()
+app = Flask (__name__)
+
+
+app.config ['MYSQL_DATABASE_USER'] = 'root'
+app.config ['MYSQL_DATABASE_PASSWORD'] = 'xxxxx'
+app.config ['MYSQL_DATABASE_DB'] = 'dbteste'
+app.config ['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
+
+@app.route('/')
+def main():
+    return render_template ("aula.html")
+@app.route('/gravar', methods=['POST','GET'])
+def gravar():
+    conta_contabil = request.form ['conta_contabil']
+    centro_custo = request.form ['centro_custo']
+    valor = request.form ['valor']
+    historico = request.form ['historico']
+    data_lanc = request.form ['data_lanc']
+    if conta_contabil and centro_custo and valor and historico and data_lanc:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute('insert into contabil (conta_contabil,centro_custo,valor,historico,data_lanc) VALUES (%s,%s,%s,%s,%s)',(conta_contabil,centro_custo,valor,historico,data_lanc))
+        conn.commit()
+    return render_template 
